@@ -39,8 +39,13 @@ func (s *ProductService) Create(ctx context.Context, req dto.CreateProductReques
 		return nil, err
 	}
 
-	product := models.ToProductModel(row)
-	return &product, nil
+	return &models.Product{
+		ID:        row.ID,
+		Name:      row.Name,
+		Price:     row.Price,
+		CreatedAt: row.CreatedAt,
+		UpdatedAt: row.UpdatedAt,
+	}, nil
 }
 
 func (s *ProductService) GetByID(ctx context.Context, id int32) (*models.Product, error) {
@@ -49,8 +54,13 @@ func (s *ProductService) GetByID(ctx context.Context, id int32) (*models.Product
 		return nil, err
 	}
 
-	product := models.ToProductModel(row)
-	return &product, nil
+	return &models.Product{
+		ID:        row.ID,
+		Name:      row.Name,
+		Price:     row.Price,
+		CreatedAt: row.CreatedAt,
+		UpdatedAt: row.UpdatedAt,
+	}, nil
 }
 
 func (s *ProductService) List(ctx context.Context, req dto.PaginationRequest) ([]models.Product, error) {
@@ -62,6 +72,17 @@ func (s *ProductService) List(ctx context.Context, req dto.PaginationRequest) ([
 		return nil, err
 	}
 
-	return models.ToProductModels(rows), nil
+	var products []models.Product
+	for _, row := range rows {
+		products = append(products, models.Product{
+			ID:        row.ID,
+			Name:      row.Name,
+			Price:     row.Price,
+			CreatedAt: row.CreatedAt,
+			UpdatedAt: row.UpdatedAt,
+		})
+	}
+
+	return products, nil
 }
 ```
