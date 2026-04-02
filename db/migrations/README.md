@@ -69,10 +69,3 @@ CREATE TABLE IF NOT EXISTS users (
 ```sql
 DROP TABLE IF EXISTS users;
 ```
-
-## Rules
-
-- Every `.up.sql` file **must** have a corresponding `.down.sql` file
-- Migrations are **sequential** — never modify an already applied migration; create a new one instead
-- Use `IF NOT EXISTS` / `IF EXISTS` to make migrations idempotent
-- Migration files in this directory are also used by `sqlc` as the schema source (see `sqlc.yaml`)

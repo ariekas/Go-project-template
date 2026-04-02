@@ -78,9 +78,3 @@ defer db.Close()
 app := routes.New(db)
 app.Run(":" + os.Getenv("APP_PORT"))
 ```
-
-## Rules
-
-- Routes handle **dependency injection** — initialize services and controllers, then wire them to endpoints
-- Group routes by feature and API version (`/api/v1/...`)
-- Apply middlewares at the group level, not individual routes (unless needed)

@@ -63,9 +63,3 @@ sqlc generate
 
 Generated Go code will be placed in `internal/db/sqlc/` (as configured in `sqlc.yaml`).
 
-## Rules
-
-- Use parameterized queries (`$1`, `$2`, ...) — never concatenate user input into SQL
-- Prefer `RETURNING` clause to get the inserted/updated row in a single query
-- Use soft delete (`deleted_at IS NULL`) instead of hard delete when appropriate
-- Keep queries **focused** — one operation per query function

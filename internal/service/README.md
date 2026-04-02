@@ -65,11 +65,3 @@ func (s *ProductService) List(ctx context.Context, req dto.PaginationRequest) ([
 	return models.ToProductModels(rows), nil
 }
 ```
-
-## Rules
-
-- Services **must not** import HTTP-related packages (`gin`, `net/http`)
-- Services receive **DTOs** as input and return **models** or errors as output
-- Use the sqlc-generated `Querier` interface for testability (dependency injection)
-- Business validations and rules belong here, not in controllers
-- Database transactions should be managed in this layer

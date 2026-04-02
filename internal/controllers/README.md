@@ -50,9 +50,3 @@ func (ctrl *ProductController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": result})
 }
 ```
-
-## Rules
-
-- Controllers **must not** contain business logic — delegate to the service layer
-- Controllers **must not** access the database directly
-- Use DTOs for request binding and response formatting

@@ -8,16 +8,6 @@ This directory contains **HTTP middleware** functions that execute before or aft
 <middleware_name>.go
 ```
 
-## Common Middlewares
-
-| Middleware      | Purpose                                     |
-| --------------- | ------------------------------------------- |
-| `auth.go`       | JWT/token authentication and authorization  |
-| `cors.go`       | Cross-Origin Resource Sharing configuration |
-| `logger.go`     | Request/response logging                    |
-| `rate_limit.go` | API rate limiting                           |
-| `recovery.go`   | Panic recovery                              |
-
 ## Example
 
 ```go
@@ -49,18 +39,3 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 ```
-
-## Usage in Routes
-
-```go
-api := router.Group("/api/v1")
-api.Use(middlewares.AuthMiddleware())
-{
-    api.GET("/profile", ctrl.GetProfile)
-}
-```
-
-## Rules
-
-- Middlewares **must** call `c.Next()` to pass control to the next handler, or `c.Abort()` to stop the chain
-- Use `c.Set()` / `c.Get()` to pass data between middleware and handlers
