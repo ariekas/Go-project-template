@@ -2,40 +2,25 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"template-golang/internal/config"
+	"template-golang/internal/routes"
 
-	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
-
-	/*
-	routes "Golang/internal/routes" --> import modul routes app
-	*/
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	app := gin.Default()
 
-	if err := godotenv.Load(); err != nil {
-		log.Println("Warning: .env file not found, using system environment")
-	}
+	godotenv.Load()
 
-	_, err := config.ConnectionDB()
-	// db, err := config.ConnectionDB() --> Deklarasi database connection
-
-
+	db, err := config.Database()
 	if err != nil {
-		fmt.Println("Failed to connect to database: ", err)
+		fmt.Printf("Failed to connect database, Error: %s", err)
 		return
 	}
 
-	app.GET("/", func(c *gin.Context) {
-		c.String(200, "Back IS Running")
-	})
-
-	/*
-	app := routes.New(db) --> Menjalankan database connection
-	*/
+	routes.Routes(db)
 
 	app.Run(":8080")
 }
