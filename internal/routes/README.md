@@ -15,34 +15,35 @@ routes.go          # Main route setup
 package routes
 
 import (
-	"database/sql"
-
 	"template-golang/internal/controllers"
 	"template-golang/internal/middlewares"
 	"template-golang/internal/service"
 
 	db "template-golang/internal/db/sqlc"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func New(conn *sql.DB) *gin.Engine {
-	router := gin.Default()
+func New(pool *pgxpool.Pool) *fiber.App {
+	app := fiber.New()
 
 	// Initialize sqlc queries
-	queries := db.New(conn)
+	queries := db.New(pool)
 
 	// Initialize layers
 	productService := service.NewProductService(queries)
 	productCtrl := controllers.NewProductController(productService)
 
 	// Public routes
-	router.GET("/", func(c *gin.Context) {
-		c.String(200, "API is running")
+	app.Get("/", func(c fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "API is running",
+		})
 	})
 
 	// API v1 group
-	api := router.Group("/api/v1")
+	api := app.Group("/api/v1")
 	{
 		// Product routes
 		products := api.Group("/products")
@@ -62,7 +63,7 @@ func New(conn *sql.DB) *gin.Engine {
 		// Admin-only endpoints here
 	}
 
-	return router
+	return app
 }
 ```
 
@@ -76,5 +77,5 @@ if err != nil {
 defer db.Close()
 
 app := routes.New(db)
-app.Run(":" + os.Getenv("APP_PORT"))
+app.Listen(":" + os.Getenv("APP_PORT"))
 ```

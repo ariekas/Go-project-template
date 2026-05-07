@@ -1,12 +1,12 @@
-# 🚀 Go API Template — Gin + PostgreSQL + sqlc
+# 🚀 Go API Template — Fiber + PostgreSQL + sqlc
 
 ![Go Version](https://img.shields.io/badge/Go-1.25-00ADD8?style=flat-square&logo=go)
-![Framework](https://img.shields.io/badge/Gin-v1.12-00ADD8?style=flat-square)
+![Framework](https://img.shields.io/badge/Fiber-v3.2-00ADD8?style=flat-square)
 ![Database](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)
 ![SQL](https://img.shields.io/badge/sqlc-Type--Safe-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-A production-ready Go project template for building RESTful APIs. Built with **Gin** as the HTTP framework, **PostgreSQL** as the database, and **sqlc** for type-safe SQL code generation. This template follows a clean **layered architecture** pattern that separates concerns and makes the codebase scalable, testable, and maintainable.
+A production-ready Go project template for building RESTful APIs. Built with **Fiber** as the HTTP framework, **PostgreSQL** as the database, and **sqlc** for type-safe SQL code generation. This template follows a clean **layered architecture** pattern that separates concerns and makes the codebase scalable, testable, and maintainable.
 
 ---
 
@@ -26,10 +26,10 @@ A production-ready Go project template for building RESTful APIs. Built with **G
 | Technology                                   | Purpose                  |
 | -------------------------------------------- | ------------------------ |
 | [Go 1.25+](https://go.dev/)                  | Programming language     |
-| [Gin v1.12](https://gin-gonic.com/)          | HTTP web framework       |
+| [Fiber v3.2](https://gofiber.io/)             | HTTP web framework       |
 | [PostgreSQL](https://www.postgresql.org/)    | Relational database      |
 | [sqlc](https://sqlc.dev/)                    | SQL-to-Go code generator |
-| [lib/pq](https://github.com/lib/pq)          | PostgreSQL driver for Go |
+| [pgx](https://github.com/jackc/pgx)           | PostgreSQL driver for Go |
 | [godotenv](https://github.com/joho/godotenv) | `.env` file loader       |
 
 ---
@@ -84,7 +84,7 @@ A production-ready Go project template for building RESTful APIs. Built with **G
 
 Application entry point. `main.go` is responsible for:
 
-- Initializing the Gin HTTP server
+- Initializing the Fiber HTTP server
 - Loading environment variables from `.env`
 - Establishing and verifying the database connection
 - Registering routes and starting the server
@@ -179,6 +179,22 @@ The server starts at `http://localhost:8080`. Verify with:
 curl http://localhost:8080/
 # Response: Back IS Running
 ```
+
+### 8. Run with Hot Reload
+
+Install Air once:
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+Start the development server with hot reload:
+
+```bash
+air
+```
+
+Air uses `.air.toml` and rebuilds `./cmd/api` into `./tmp/main` whenever Go, template, HTML, or env files change.
 
 ---
 
@@ -299,6 +315,8 @@ Create `internal/controllers/product_controller.go`:
 ```go
 package controllers
 
+import "github.com/gofiber/fiber/v3"
+
 type ProductController struct {
     service *service.ProductService
 }
@@ -307,7 +325,7 @@ func NewProductController(s *service.ProductService) *ProductController {
     return &ProductController{service: s}
 }
 
-func (ctrl *ProductController) Create(c *gin.Context) {
+func (ctrl *ProductController) Create(c fiber.Ctx) error {
     // Parse request → call service → return response
 }
 ```
@@ -319,7 +337,7 @@ Add routes in `internal/routes/routes.go`:
 ```go
 productCtrl := controllers.NewProductController(productService)
 
-api := router.Group("/api/v1")
+api := app.Group("/api/v1")
 {
     products := api.Group("/products")
     {

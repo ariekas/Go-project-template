@@ -17,25 +17,24 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v3"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
+func AuthMiddleware() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		authHeader := c.Get("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Authorization header is required",
 			})
-			return
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 
 		// Validate token here...
 
-		c.Set("user_id", userID)
-		c.Next()
+		c.Locals("user_id", userID)
+		return c.Next()
 	}
 }
 ```

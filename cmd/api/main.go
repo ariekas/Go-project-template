@@ -5,13 +5,10 @@ import (
 	"template-golang/internal/config"
 	"template-golang/internal/routes"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	app := gin.Default()
-
 	godotenv.Load()
 
 	db, err := config.Database()
@@ -19,8 +16,11 @@ func main() {
 		fmt.Printf("Failed to connect database, Error: %s", err)
 		return
 	}
+	defer db.Close()
 
-	routes.Routes(db)
+	app := routes.Routes(db)
 
-	app.Run(":8080")
+	if err := app.Listen(":8080"); err != nil {
+		fmt.Printf("Failed to start server, Error: %s", err)
+	}
 }

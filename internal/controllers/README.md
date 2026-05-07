@@ -23,7 +23,7 @@ import (
 	"template-golang/internal/dto"
 	"template-golang/internal/service"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v3"
 )
 
 type ProductController struct {
@@ -34,19 +34,17 @@ func NewProductController(s *service.ProductService) *ProductController {
 	return &ProductController{service: s}
 }
 
-func (ctrl *ProductController) Create(c *gin.Context) {
+func (ctrl *ProductController) Create(c fiber.Ctx) error {
 	var req dto.CreateProductRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.Bind().Body(&req); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	result, err := ctrl.service.Create(c.Request.Context(), req)
+	result, err := ctrl.service.Create(c.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"data": result})
+	return c.Status(http.StatusCreated).JSON(fiber.Map{"data": result})
 }
 ```
